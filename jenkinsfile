@@ -1,0 +1,52 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven'
+        jdk 'JDK'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/rajshribisen50/Final_API_Project_RestAssured_Cucumber_Testng.git'
+            }
+        }
+
+        stage('Build & Test') {
+            steps {
+                bat 'mvn clean test'
+            }
+        }
+
+        stage('Allure Report') {
+            steps {
+                allure([
+                    includeProperties: false,
+                    results: [[path: 'allure-results']]
+                ])
+            }
+        }
+
+        stage('Publish Cucumber Report') {
+            steps {
+                publishHTML([
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'reports',
+                    reportFiles: 'cucumber-report.html',
+                    reportName: 'Cucumber Report'
+                ])
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline Finished'
+        }
+    }
+}
