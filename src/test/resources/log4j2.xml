@@ -1,0 +1,12 @@
+<Configuration status="INFO">
+    <Appenders>
+        <File name="FileLogger" fileName="logs/app.log">
+            <PatternLayout pattern="%d %p %c %m%n"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="FileLogger"/>
+        </Root>
+    </Loggers>
+</Configuration>

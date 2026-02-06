@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Payment API Suite">
+    <listeners>
+        <listener class-name="listeners.TestListener"/>
+    </listeners>
+    <test name="Paypal Tests">
+        <classes>
+            <class name="tests.PaypalAuthTest"/>
+            <class name="tests.PaypalOrderTest"/>
+
+        </classes>
+    </test>
+</suite>
