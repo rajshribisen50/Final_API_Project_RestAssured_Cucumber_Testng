@@ -8,7 +8,8 @@ import io.cucumber.testng.CucumberOptions;
         features = {
                 "src/test/resources/features/PaypalAuth.feature",
                 "src/test/resources/features/PaypalOrder.feature",
-                "src/test/resources/features/products.feature"
+                "src/test/resources/features/products.feature",
+                "src/test/resources/features/payment.feature"
         },
         glue = {"stepdefinitions", "hooks"},
         plugin = {
