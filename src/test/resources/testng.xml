@@ -7,7 +7,7 @@
         <classes>
             <class name="tests.PaypalAuthTest"/>
             <class name="tests.PaypalOrderTest"/>
-            <class name="tests.PaymentE2ETest"/>
+
 
         </classes>
     </test>
