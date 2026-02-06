@@ -16,5 +16,5 @@ import io.cucumber.testng.CucumberOptions;
                 "html:reports/cucumber-report.html"
         }
 )
-public class CucumberTestRunner extends AbstractTestNGCucumberTests {
+public class CucumberTest extends AbstractTestNGCucumberTests {
 }
