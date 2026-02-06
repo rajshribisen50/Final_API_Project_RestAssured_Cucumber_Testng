@@ -2,12 +2,11 @@ pipeline {
     agent any
 
     environment {
-        MAVEN_HOME = tool 'Maven'            // Your Jenkins Maven installation name
-        JAVA_HOME = tool 'JDK'               // Your Jenkins JDK installation name
+        MAVEN_HOME = tool 'Maven'        // Jenkins Maven installation name
+        JAVA_HOME = tool 'JDK'           // Jenkins JDK installation name
         PATH = "${env.MAVEN_HOME}/bin;${env.JAVA_HOME}/bin;${env.PATH}"
 
         DOCKERHUB_CREDENTIALS = 'dockerhub-creds'  // Jenkins credential ID
-        DOCKERHUB_USERNAME = 'rbisen'              // Your DockerHub username
         IMAGE_NAME = 'final_api_project'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
     }
@@ -27,11 +26,16 @@ pipeline {
             }
         }
 
-        // Allure stage removed to avoid failure
-
         stage('Build Docker Image') {
             steps {
-                bat "docker build -t ${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG} ."
+                // Use the username from credentials for tagging
+                withCredentials([usernamePassword(
+                    credentialsId: "${DOCKERHUB_CREDENTIALS}",
+                    usernameVariable: 'DOCKERHUB_USER',
+                    passwordVariable: 'DOCKERHUB_PASS'
+                )]) {
+                    bat "docker build -t %DOCKERHUB_USER%/${IMAGE_NAME}:${IMAGE_TAG} ."
+                }
             }
         }
 
@@ -39,11 +43,11 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: "${DOCKERHUB_CREDENTIALS}",
-                    passwordVariable: 'DOCKERHUB_PASS',
-                    usernameVariable: 'DOCKERHUB_USER'
+                    usernameVariable: 'DOCKERHUB_USER',
+                    passwordVariable: 'DOCKERHUB_PASS'
                 )]) {
                     bat "docker login -u %DOCKERHUB_USER% -p %DOCKERHUB_PASS%"
-                    bat "docker push ${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}"
+                    bat "docker push %DOCKERHUB_USER%/${IMAGE_NAME}:${IMAGE_TAG}"
                     bat "docker logout"
                 }
             }
@@ -52,7 +56,7 @@ pipeline {
 
     post {
         success {
-            echo "Pipeline completed successfully! Docker image pushed: ${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}"
+            echo "Pipeline completed successfully! Docker image pushed: %DOCKERHUB_USER%/${IMAGE_NAME}:${IMAGE_TAG}"
         }
         failure {
             echo "Pipeline failed. Check the console output for errors."
