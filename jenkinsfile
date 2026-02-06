@@ -11,7 +11,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/rajshribisen50/Final_API_Project_RestAssured_Cucumber_Testng.git'
+                url: 'https://github.com/rajshribisen50/Final_API_Project_RestAssured_Cucumber_Testng.git'
             }
         }
 
@@ -21,32 +21,16 @@ pipeline {
             }
         }
 
-        stage('Allure Report') {
+        stage('Generate Allure') {
             steps {
-                allure([
-                    includeProperties: false,
-                    results: [[path: 'allure-results']]
-                ])
-            }
-        }
-
-        stage('Publish Cucumber Report') {
-            steps {
-                publishHTML([
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: true,
-                    keepAll: true,
-                    reportDir: 'reports',
-                    reportFiles: 'cucumber-report.html',
-                    reportName: 'Cucumber Report'
-                ])
+                bat 'allure generate target/allure-results --clean -o allure-report'
             }
         }
     }
 
     post {
         always {
-            echo 'Pipeline Finished'
+            archiveArtifacts artifacts: '**/reports/*.html', allowEmptyArchive: true
         }
     }
 }
